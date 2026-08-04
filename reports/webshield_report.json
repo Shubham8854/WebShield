@@ -1,0 +1,65 @@
+{
+    "scan_time": "2026-08-04 18:23:15.422666",
+    "results": {
+        "target": "",
+        "score": 70,
+        "rating": "",
+        "headers": {
+            "Strict-Transport-Security": {
+                "status": "MISSING",
+                "risk": "HIGH",
+                "info": "Protects against HTTPS downgrade attacks"
+            },
+            "Content-Security-Policy": {
+                "status": "PRESENT",
+                "risk": "HIGH",
+                "info": "Helps prevent Cross-Site Scripting attacks"
+            },
+            "X-Frame-Options": {
+                "status": "PRESENT",
+                "risk": "MEDIUM",
+                "info": "Protects against clickjacking attacks"
+            },
+            "X-Content-Type-Options": {
+                "status": "PRESENT",
+                "risk": "MEDIUM",
+                "info": "Prevents MIME type sniffing"
+            },
+            "Referrer-Policy": {
+                "status": "MISSING",
+                "risk": "LOW",
+                "info": "Controls referrer information leakage"
+            }
+        },
+        "ssl": {
+            "status": "FAILED",
+            "error": "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self-signed certificate (_ssl.c:1033)"
+        },
+        "whois": {
+            "error": "Whois command returned no output"
+        },
+        "dns": {
+            "ip": "192.168.1.1"
+        },
+        "technology": [
+            ""
+        ],
+        "ports": [
+            {
+                "port": 53,
+                "service": "DNS",
+                "status": "OPEN"
+            },
+            {
+                "port": 80,
+                "service": "HTTP",
+                "status": "OPEN"
+            },
+            {
+                "port": 443,
+                "service": "HTTPS",
+                "status": "OPEN"
+            }
+        ]
+    }
+}
