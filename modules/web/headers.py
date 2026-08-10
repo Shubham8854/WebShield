@@ -1,41 +1,39 @@
 from modules.reporting.results import set_result
+from utils.ui import show_security_headers
 
 
 SECURITY_HEADERS = {
 
     "Strict-Transport-Security": {
         "risk": "HIGH",
-        "info": "Protects against HTTPS downgrade attacks"
+        "info": "Protects against HTTPS downgrade attacks",
     },
 
     "Content-Security-Policy": {
         "risk": "HIGH",
-        "info": "Helps prevent Cross-Site Scripting attacks"
+        "info": "Helps prevent Cross-Site Scripting attacks",
     },
 
     "X-Frame-Options": {
         "risk": "MEDIUM",
-        "info": "Protects against clickjacking attacks"
+        "info": "Protects against clickjacking attacks",
     },
 
     "X-Content-Type-Options": {
         "risk": "MEDIUM",
-        "info": "Prevents MIME type sniffing"
+        "info": "Prevents MIME type sniffing",
     },
 
     "Referrer-Policy": {
         "risk": "LOW",
-        "info": "Controls referrer information leakage"
-    }
+        "info": "Controls referrer information leakage",
+    },
 
 }
 
 
+
 def check_headers(response):
-
-    print("\n[+] Security Header Analysis")
-    print("-" * 40)
-
 
     findings = {}
 
@@ -45,74 +43,41 @@ def check_headers(response):
     for header, info in SECURITY_HEADERS.items():
 
 
-        if header in response.headers:
-
-            print(
-                f"[+] {header}"
-            )
-
-            print(
-                f"    Status: PRESENT"
-            )
-
-            print(
-                f"    Risk: {info['risk']}"
-            )
-
-            print(
-                f"    Info: {info['info']}"
-            )
+        present = header in response.headers
 
 
-            findings[header] = {
+        status = (
+            "PRESENT"
+            if present
+            else
+            "MISSING"
+        )
 
-                "status": "PRESENT",
 
-                "risk": info["risk"],
+        findings[header] = {
 
-                "info": info["info"]
+            "status": status,
 
-            }
+            "risk": info["risk"],
+
+            "info": info["info"]
+
+        }
 
 
 
-        else:
-
-            print(
-                f"[-] {header}"
-            )
-
-            print(
-                f"    Status: MISSING"
-            )
-
-            print(
-                f"    Risk: {info['risk']}"
-            )
-
-            print(
-                f"    Info: {info['info']}"
-            )
-
-
-            findings[header] = {
-
-                "status": "MISSING",
-
-                "risk": info["risk"],
-
-                "info": info["info"]
-
-            }
+        if not present:
 
 
             if info["risk"] == "HIGH":
 
                 score -= 25
 
+
             elif info["risk"] == "MEDIUM":
 
                 score -= 15
+
 
             else:
 
@@ -120,20 +85,9 @@ def check_headers(response):
 
 
 
-    if score < 0:
-
-        score = 0
+    score = max(score,0)
 
 
-
-    print("\n" + "-" * 40)
-
-    print(
-        f"[+] Security Score: {score}/100"
-    )
-
-
-    # Save results for reports
 
     set_result(
         "headers",
@@ -143,6 +97,13 @@ def check_headers(response):
 
     set_result(
         "score",
+        score
+    )
+
+
+    # Terminal display
+    show_security_headers(
+        findings,
         score
     )
 

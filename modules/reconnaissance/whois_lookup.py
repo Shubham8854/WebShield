@@ -2,10 +2,8 @@ import whois
 
 from modules.reporting.results import set_result
 
-def lookup(domain):
 
-    print("\n[+] WHOIS Information")
-    print("-" * 40)
+def lookup(domain):
 
     whois_data = {}
 
@@ -13,27 +11,35 @@ def lookup(domain):
 
         info = whois.whois(domain)
 
-        registrar = str(info.registrar)
-        creation = str(info.creation_date)
-        expiration = str(info.expiration_date)
-
-        print(f"[+] Registrar: {registrar}")
-        print(f"[+] Created: {creation}")
-        print(f"[+] Expires: {expiration}")
-
         whois_data = {
-            "registrar": registrar,
-            "creation_date": creation,
-            "expiration_date": expiration
+
+            "registrar": str(
+                info.registrar
+            ),
+
+            "creation_date": str(
+                info.creation_date
+            ),
+
+            "expiration_date": str(
+                info.expiration_date
+            ),
+
+            "name_servers": str(
+                info.name_servers
+            )
+
         }
 
     except Exception as error:
 
-        print("[-] WHOIS Lookup Failed")
-        print(error)
+        whois_data = {
+            "error": str(error)
+        }
 
-        whois_data["error"] = str(error)
-
-    set_result("whois", whois_data)
+    set_result(
+        "whois",
+        whois_data
+    )
 
     return whois_data

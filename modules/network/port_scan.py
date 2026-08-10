@@ -1,6 +1,8 @@
 import socket
 
 from modules.reporting.results import set_result
+from utils.ui import show_port_scan
+
 
 COMMON_PORTS = {
     21: "FTP",
@@ -16,34 +18,58 @@ COMMON_PORTS = {
 
 def scan_ports(domain):
 
-    print("\n[+] Port Scan")
-    print("-" * 40)
-
     ports = []
 
     for port, service in COMMON_PORTS.items():
 
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock = socket.socket(
+            socket.AF_INET,
+            socket.SOCK_STREAM
+        )
+
         sock.settimeout(2)
 
-        result = sock.connect_ex((domain, port))
+        try:
 
-        if result == 0:
+            result = sock.connect_ex(
+                (domain, port)
+            )
 
-            print(f"[+] Port {port} OPEN ({service})")
+            status = (
+                "OPEN"
+                if result == 0
+                else
+                "CLOSED"
+            )
 
             ports.append({
                 "port": port,
                 "service": service,
-                "status": "OPEN"
+                "status": status
             })
 
-        else:
+        except Exception:
 
-            print(f"[-] Port {port} CLOSED ({service})")
+            ports.append({
+                "port": port,
+                "service": service,
+                "status": "ERROR"
+            })
 
-        sock.close()
+        finally:
 
-    set_result("ports", ports)
+            sock.close()
+
+
+    set_result(
+        "ports",
+        ports
+    )
+
+
+    show_port_scan(
+        ports
+    )
+
 
     return ports

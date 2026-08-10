@@ -1,11 +1,15 @@
+
+import requests
 import socket
 import time
-import requests
 
 
 def scan(url):
+
     try:
+
         start = time.time()
+
 
         response = requests.get(
             url,
@@ -13,22 +17,45 @@ def scan(url):
             allow_redirects=True
         )
 
-        elapsed = round((time.time() - start) * 1000)
 
-        hostname = response.url.split("//")[1].split("/")[0]
-        ip = socket.gethostbyname(hostname)
+        response_time = round(
+            time.time() - start,
+            3
+        )
 
-        return {
-            "response": response,
-            "target": {
-                "url": response.url,
-                "status": response.status_code,
-                "server": response.headers.get("Server", "Unknown"),
-                "content_type": response.headers.get("Content-Type", "Unknown"),
-                "ip": ip,
-                "response_time": f"{elapsed} ms"
-            }
-        }
 
-    except Exception:
+        print(
+            "\n[+] Website:",
+            response.url
+        )
+
+        print(
+            "[+] Status Code:",
+            response.status_code
+        )
+
+
+        print(
+            "\n[+] Headers Found:"
+        )
+
+
+        for header, value in response.headers.items():
+
+            print(
+                f"{header}: {value}"
+            )
+
+
+        return response
+
+
+    except requests.exceptions.RequestException as error:
+
+
+        print(
+            "[-] Error:",
+            error
+        )
+
         return None

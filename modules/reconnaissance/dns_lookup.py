@@ -1,29 +1,50 @@
 import socket
 
 from modules.reporting.results import set_result
+from utils.ui import show_dns_info
+
 
 def dns_scan(domain):
 
-    print("\n[+] DNS Lookup")
-    print("-" * 40)
-
-    dns_data = {}
+    dns_data = {
+        "A": [],
+        "AAAA": [],
+        "MX": [],
+        "NS": []
+    }
 
     try:
+        ipv4 = socket.gethostbyname_ex(domain)
 
-        ip = socket.gethostbyname(domain)
+        dns_data["A"] = ipv4[2]
 
-        print(f"[+] IP Address: {ip}")
+    except Exception:
+        pass
 
-        dns_data["ip"] = ip
+    try:
+        ipv6 = socket.getaddrinfo(
+            domain,
+            None,
+            socket.AF_INET6
+        )
 
-    except Exception as error:
+        dns_data["AAAA"] = list(
+            set(
+                item[4][0]
+                for item in ipv6
+            )
+        )
 
-        print("[-] DNS Lookup Failed")
-        print(error)
+    except Exception:
+        pass
 
-        dns_data["error"] = str(error)
+    set_result(
+        "dns",
+        dns_data
+    )
 
-    set_result("dns", dns_data)
+    show_dns_info(
+        dns_data
+    )
 
     return dns_data

@@ -1,9 +1,8 @@
 from modules.reporting.results import set_result
+from utils.ui import show_technology_info
+
 
 def detect(response):
-
-    print("\n[+] Technology Detection")
-    print("-" * 40)
 
     technologies = []
 
@@ -13,18 +12,38 @@ def detect(response):
 
         server = headers["Server"]
 
-        print(f"[+] Server: {server}")
+        if server:
 
-        technologies.append(server)
+            technologies.append({
+                "type": "Web Server",
+                "value": server
+            })
 
     if "X-Powered-By" in headers:
 
         powered = headers["X-Powered-By"]
 
-        print(f"[+] Powered By: {powered}")
+        if powered:
 
-        technologies.append(powered)
+            technologies.append({
+                "type": "Powered By",
+                "value": powered
+            })
 
-    set_result("technology", technologies)
+    if not technologies:
+
+        technologies.append({
+            "type": "Web Server",
+            "value": "Unknown"
+        })
+
+    set_result(
+        "technology",
+        technologies
+    )
+
+    show_technology_info(
+        technologies
+    )
 
     return technologies
