@@ -1,9 +1,27 @@
+# Python
 __pycache__/
 *.py[cod]
 *.pyo
 
+# Virtual environments
 venv/
+myenv/
+objection-env/
 .env
+.env.*
 
+# Logs
 logs/
+*.log
+
+# Generated reports
 reports/
+
+# Backup files
+*.bak
+*.bak2
+
+# OS / editor files
+.DS_Store
+*.swp
+*.swo

@@ -11,6 +11,12 @@ from modules.reconnaissance.tech_detector import detect
 from modules.network.port_scan import scan_ports
 
 from modules.reporting.results import get_results, set_result
+from modules.reporting.summary import (
+    generate_summary,
+    show_final_security_summary
+)
+
+from modules.vulnerability.cve_engine import scan_technologies
 
 from utils.helpers import clean_domain, normalize_url
 from utils.logger import log_info, log_error
@@ -28,82 +34,197 @@ def start():
 
     loading_animation()
 
-
     target = input(
         "Enter target (domain, URL, or IP): "
     ).strip()
 
-
     try:
+
+        # -----------------------------------------
+        # NORMALIZE TARGET
+        # -----------------------------------------
 
         target = normalize_url(target)
 
         domain = clean_domain(target)
-
 
         set_result(
             "target",
             domain
         )
 
-
         log_info(
             f"Scan started for {domain}"
         )
 
+        # -----------------------------------------
+        # HTTP SCAN
+        # -----------------------------------------
 
         response = scan(target)
 
+        technologies = []
 
-        if not response:
+        if response:
 
-            print(
-                "[-] Scan failed"
+
+            show_target_info(
+                response
             )
 
-            return
+            # -----------------------------------------
+            # SECURITY HEADERS
+            # -----------------------------------------
 
+            check_headers(
+                response
+            )
 
+            # -----------------------------------------
+            # TECHNOLOGY DETECTION
+            # -----------------------------------------
 
-        # Target Box
-        show_target_info(response)
+            technologies = detect(
+                response
+            )
 
+        else:
 
+            print(
+                "[-] HTTP response unavailable"
+            )
 
-        # Security Checks
+            print(
+                "[*] Continuing with network/recon checks..."
+            )
 
-        check_headers(response)
+        # -----------------------------------------
+        # SSL / TLS
+        # -----------------------------------------
 
+        check_ssl(
+            domain
+        )
 
-        check_ssl(domain)
+        # -----------------------------------------
+        # WHOIS
+        # -----------------------------------------
 
+        lookup(
+            domain
+        )
 
-        lookup(domain)
+        # -----------------------------------------
+        # DNS
+        # -----------------------------------------
 
+        dns_scan(
+            domain
+        )
 
-        dns_scan(domain)
+        # -----------------------------------------
+        # NETWORK PORTS
+        # -----------------------------------------
 
+        scan_ports(
+            domain
+        )
 
-        detect(response)
+        # -----------------------------------------
+        # CVE / NVD ANALYSIS
+        # -----------------------------------------
 
+        if technologies:
 
-        scan_ports(domain)
+            print(
+                "\n🔎 VULNERABILITY / CVE ANALYSIS"
+            )
 
+            scan_technologies(
+                technologies
+            )
 
+        else:
+
+            set_result(
+                "cves",
+                []
+            )
+
+        # -----------------------------------------
+        # CALCULATE OPEN PORTS
+        # -----------------------------------------
 
         results = get_results()
 
+        open_ports = len([
+            port
+            for port in results.get(
+                "ports",
+                []
+            )
+            if port.get("status") == "OPEN"
+        ])
 
+        set_result(
+            "open_ports",
+            open_ports
+        )
+
+        # -----------------------------------------
+        # FINAL SUMMARY
+        # -----------------------------------------
+
+        summary = generate_summary()
+
+        # -----------------------------------------
+        # FINAL STATE
+        # -----------------------------------------
+
+        set_result(
+            "score",
+            summary["score"]
+        )
+
+        set_result(
+            "risk_level",
+            summary["risk_level"]
+        )
+
+        set_result(
+            "rating",
+            summary["risk_level"]
+        )
+
+        set_result(
+            "findings",
+            summary["findings"]
+        )
+
+        set_result(
+            "recommendations",
+            summary["recommendations"]
+        )
+
+        # -----------------------------------------
+        # DISPLAY FINAL SUMMARY
+        # -----------------------------------------
+
+        show_final_security_summary()
+
+        # -----------------------------------------
+        # REPORT GENERATION
+        # -----------------------------------------
+
+        results = get_results()
 
         generate_report(
             results
         )
 
-
         log_info(
             "Scan completed"
         )
-
 
     except Exception as error:
 

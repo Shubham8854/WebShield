@@ -1,262 +1,325 @@
-# 🛡️ WebShield - Website Security Scanner
+cd ~/WebShield
 
-WebShield is a Python-based Website Security Scanner designed to perform a basic security assessment of web applications. It analyzes a website's security configuration, checks for common security headers, inspects SSL certificates, performs DNS and WHOIS lookups, detects basic web technologies, scans common ports, and generates reports.
+cat > README.md <<'EOF'
+# 🛡 WebShield 2.0
 
-This project was built as a cybersecurity learning project to understand how security assessment tools work while improving Python programming and networking skills.
+### Web Security Assessment Framework
 
----
+WebShield 2.0 is a Python-based web security assessment framework designed to automate reconnaissance, security configuration analysis, vulnerability identification, risk scoring, and security reporting.
 
-# ✨ Features
-
-* 🌐 Website HTTP Scanner
-* 🔒 Security Header Analysis
-* 📊 Security Score Calculation
-* 🔐 SSL Certificate Inspection
-* 🌍 WHOIS Lookup
-* 📡 DNS Lookup
-* 🖥️ Basic Technology Detection
-* 🚪 Common Port Scanner
-* 📄 JSON Report Generation
-* 🌐 HTML Report Generation
-* 📝 Scan Logging
-* ⚠️ Error Handling
+It combines web reconnaissance, security-header analysis, SSL/TLS validation, technology detection, network exposure analysis, and live NVD/CVE intelligence into a single terminal-based security assessment workflow.
 
 ---
 
-# 🛠️ Technologies Used
+## 🚀 Features
 
-* Python 3
-* Requests
-* Socket
-* SSL
-* python-whois
-* JSON
-* Logging
-* Datetime
-
----
-
-# 📂 Project Structure
-
-```text
-WebShield/
-│
-├── logs/
-│   └── webshield.log
-│
-├── modules/
-│   ├── scanner.py
-│   ├── headers.py
-│   ├── ssl_checker.py
-│   ├── dns_lookup.py
-│   ├── whois_lookup.py
-│   ├── tech_detector.py
-│   ├── port_scan.py
-│   ├── report.py
-│   ├── html_report.py
-│   └── results.py
-│
-├── reports/
-│   ├── webshield_report.json
-│   └── webshield_report.html
-│
-├── utils/
-│   ├── helpers.py
-│   └── logger.py
-│
-├── main.py
-├── requirements.txt
-└── README.md
-```
+- 🌐 HTTP/HTTPS target assessment
+- 🔐 Security headers analysis
+- 🛡 SSL/TLS certificate validation
+- 🔎 DNS reconnaissance
+- 👤 WHOIS lookup
+- ⚙️ Web technology and version detection
+- 🔌 Common TCP port scanning
+- 🧩 CPE-based product/version validation
+- 🐛 Live NVD/CVE vulnerability lookup
+- 📊 CVSS severity and score extraction
+- 🔍 Automated security finding generation
+- 🎯 Risk scoring
+- 📋 Security recommendations
+- 📄 JSON security reports
+- 🌐 HTML security reports
+- 🎨 Rich terminal interface
+- 📝 Security assessment logging
 
 ---
 
-# ⚙️ Installation
+## 🔎 Vulnerability Intelligence
 
-## 1. Clone the repository
+WebShield 2.0 integrates with the NIST National Vulnerability Database (NVD) to identify vulnerabilities associated with detected technologies.
 
-```bash
-git clone https://github.com/YOUR_USERNAME/WebShield.git
-```
+The vulnerability workflow includes:
 
-## 2. Move into the project
+    Technology Detection
+            ↓
+    Product + Version
+            ↓
+    NVD CVE Search
+            ↓
+    CPE Validation
+            ↓
+    Version Range Validation
+            ↓
+    Confirmed CVE
+            ↓
+    CVSS Severity
+            ↓
+    Risk Scoring
+            ↓
+    Security Report
 
-```bash
-cd WebShield
-```
-
-## 3. Create a Virtual Environment
-
-Linux / macOS
-
-```bash
-python3 -m venv venv
-```
-
-Windows
-
-```powershell
-python -m venv venv
-```
+This helps reduce false-positive CVE matches by validating both the detected product and affected version information.
 
 ---
 
-## 4. Activate the Virtual Environment
+## 📊 Assessment Workflow
 
-Linux / macOS
-
-```bash
-source venv/bin/activate
-```
-
-Windows
-
-```powershell
-venv\Scripts\activate
-```
+    Target
+      │
+      ├── HTTP/HTTPS Analysis
+      │
+      ├── Security Headers
+      │
+      ├── SSL/TLS
+      │
+      ├── DNS / WHOIS
+      │
+      ├── Technology Detection
+      │
+      ├── Port Scanning
+      │
+      ├── NVD / CVE Analysis
+      │
+      ├── Finding Engine
+      │
+      ├── Risk Scoring
+      │
+      └── JSON + HTML Report
 
 ---
 
-## 5. Install Dependencies
+## 🧰 Technologies
 
-```bash
-pip install -r requirements.txt
-```
+- Python 3
+- Requests
+- Rich
+- PyFiglet
+- dnspython
+- python-whois
+- NIST NVD API
+- CPE vulnerability matching
+- CVSS
+- HTML / JSON reporting
 
 ---
 
-# ▶️ Usage
+## 📁 Project Structure
 
-Run the scanner:
+    WebShield/
+    │
+    ├── webshield.py
+    │
+    ├── core/
+    │   └── engine.py
+    │
+    ├── modules/
+    │   ├── discovery/
+    │   ├── network/
+    │   │   └── port_scan.py
+    │   │
+    │   ├── reconnaissance/
+    │   │   ├── dns_lookup.py
+    │   │   ├── tech_detector.py
+    │   │   └── whois_lookup.py
+    │   │
+    │   ├── reporting/
+    │   │   ├── findings.py
+    │   │   ├── html_report.py
+    │   │   ├── results.py
+    │   │   └── summary.py
+    │   │
+    │   ├── vulnerability/
+    │   │   ├── cpe_validator.py
+    │   │   ├── cve_engine.py
+    │   │   └── nvd_client.py
+    │   │
+    │   ├── web/
+    │   │   ├── headers.py
+    │   │   └── ssl_checker.py
+    │   │
+    │   ├── report.py
+    │   └── scanner.py
+    │
+    ├── tests/
+    │   └── test_scanner.py
+    │
+    ├── utils/
+    │   ├── helpers.py
+    │   ├── logger.py
+    │   └── ui.py
+    │
+    ├── requirements.txt
+    ├── .gitignore
+    └── README.md
 
-```bash
-python main.py
-```
+---
 
-Enter the target website when prompted.
+## ⚙️ Installation
+
+Clone the repository:
+
+    git clone <YOUR_GITHUB_REPOSITORY_URL>
+    cd WebShield
+
+Create a virtual environment:
+
+    python3 -m venv venv
+
+Activate it:
+
+    source venv/bin/activate
+
+Install dependencies:
+
+    pip install -r requirements.txt
+
+---
+
+## ▶️ Usage
+
+Start WebShield:
+
+    python3 webshield.py
+
+Enter an authorized target when prompted:
+
+    Enter target (domain, URL, or IP):
 
 Example:
 
-```text
-Enter website URL:
-https://google.com
-```
+    example.com
 
-WebShield will automatically perform:
+or:
 
-* HTTP Scan
-* Security Header Analysis
-* SSL Certificate Inspection
-* WHOIS Lookup
-* DNS Lookup
-* Technology Detection
-* Port Scan
-
-After the scan completes, reports and logs are generated automatically.
+    192.168.1.1
 
 ---
 
-# 📄 Reports
+## 📄 Reports
 
-Reports are stored inside:
+WebShield generates security assessment reports in:
 
-```text
-reports/
-```
+    reports/
 
-Generated reports:
+Supported formats:
 
-* webshield_report.json
-* webshield_report.html
+    webshield_report.json
+    webshield_report.html
 
----
-
-# 📝 Logs
-
-Scan logs are stored in:
-
-```text
-logs/webshield.log
-```
+Generated reports are excluded from version control by `.gitignore`.
 
 ---
 
-# 📊 Example Output
+## 📊 Risk Assessment
 
-```text
-[+] Website: https://google.com
-[+] Status Code: 200
+WebShield calculates an overall security score using detected security weaknesses including:
 
-[+] Security Header Analysis
+- Missing security headers
+- Invalid SSL/TLS configuration
+- Exposed network services
+- Confirmed CVEs
 
-[-] Strict-Transport-Security
-[+] X-Frame-Options
-[-] Referrer-Policy
-
-[+] SSL Certificate Valid
-
-[+] DNS Lookup
-
-[+] Technology Detection
-
-[+] Port Scan
-
-[+] Scan completed successfully
-
-[+] Report saved to reports/webshield_report.json
-```
+The framework then assigns an overall risk level based on the calculated security score.
 
 ---
 
-# 📚 What I Learned
+## 🧪 Example Vulnerability Detection
 
-This project helped me understand:
+Example detected technology:
 
-* HTTP Requests and Responses
-* Security Headers
-* SSL Certificate Validation
-* DNS Resolution
-* WHOIS Information
-* Port Scanning
-* Logging
-* JSON and HTML Report Generation
-* Python Project Structure
-* Error Handling
-* Modular Programming
+    Web Server: Boa/0.93.15
 
----
+WebShield can query the NVD and validate the detected product/version against CPE information.
 
-# 🔮 Future Improvements
+Example:
 
-* Multi-threaded Port Scanning
-* PDF Report Generation
-* Command-Line Arguments
-* Cookie Security Analysis
-* Redirect Analysis
-* Subdomain Enumeration
-* CVE Lookup
-* Dark Mode HTML Reports
+    CVE-2007-4915
+    Product: Boa
+    Version: 0.93.15
+    CVSS: 10.0
+    Severity: HIGH
+    Status: CONFIRMED
 
 ---
 
-# ⚠️ Disclaimer
+## 🔐 Responsible Use
 
-This project is intended for educational purposes only.
+WebShield is intended for:
 
-Only scan websites and systems that you own or have explicit permission to test. Unauthorized security testing may be illegal.
+- Authorized security assessments
+- Lab environments
+- CTFs
+- Security research
+- Defensive security testing
+- Systems owned or explicitly authorized for testing
+
+Do not use this framework against systems without permission.
+
+The author is not responsible for misuse of this software.
 
 ---
 
-# 📜 License
+## 📌 Project Status
 
-This project is licensed under the MIT License.
+**WebShield 2.0 — Active Development**
+
+The core assessment, vulnerability analysis, risk scoring, and reporting pipeline is implemented.
+
+Future improvements may include additional security checks, expanded technology fingerprints, enhanced reporting, and further terminal UI improvements.
 
 ---
 
-# 👨‍💻 Author
+## 👨‍💻 Author
 
-**Light Yagami**
+**Voidryn**
 
-Cybersecurity Enthusiast • Python Developer • Ethical Hacking Learner
+Cybersecurity | Python | Security Automation
 
-If you like this project, consider giving it a ⭐ on GitHub.
+---
+
+## 📜 License
+
+MIT License
+EOF
+
+echo
+echo "=========================================="
+echo "  WebShield 2.0 - Project Verification"
+echo "=========================================="
+echo
+
+echo "[1/4] Checking entry point..."
+python3 -m py_compile webshield.py
+
+if [ $? -ne 0 ]; then
+    echo "[!] webshield.py compilation failed."
+    exit 1
+fi
+
+echo "[+] webshield.py OK"
+
+echo
+echo "[2/4] Compiling project..."
+python3 -m compileall -q core modules utils webshield.py
+
+if [ $? -ne 0 ]; then
+    echo "[!] Project compilation failed."
+    exit 1
+fi
+
+echo "[+] Project compilation OK"
+
+echo
+echo "[3/4] Staging Git changes..."
+git add .
+
+echo "[+] Git changes staged"
+
+echo
+echo "[4/4] Final Git status..."
+echo "=========================================="
+git status
+echo "=========================================="
+
+echo
+echo "[+] WebShield 2.0 is ready for final Git review."
+echo "[!] No commit or push was performed."

@@ -4,7 +4,7 @@ scan_results = {
 
     "score": 0,
 
-    "rating": "",
+    "risk_level": "",
 
     "headers": {},
 
@@ -16,8 +16,13 @@ scan_results = {
 
     "technology": [],
 
-    "ports": []
+    "ports": [],
 
+    "findings": [],
+
+    "open_ports": 0,
+
+    "recommendations": []
 }
 
 

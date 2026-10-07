@@ -231,7 +231,7 @@ def show_summary(summary):
         console.print(
             f" → {item}"
         )
-def show_security_headers(findings, score):
+def show_security_headers(findings):
 
     table = Table(
         title="🔐 SECURITY HEADERS ANALYSIS",
@@ -307,23 +307,7 @@ def show_security_headers(findings, score):
 
 
 
-    score_color = (
-        "green"
-        if score >= 80
-        else
-        "yellow"
-        if score >= 60
-        else
-        "red"
-    )
 
-
-    console.print(
-        Panel(
-            f"[bold {score_color}]Security Score: {score}/100[/bold {score_color}]",
-            border_style=score_color
-        )
-    )
 def show_ssl_info(ssl_data):
 
     table = Table(
@@ -439,6 +423,49 @@ def show_technology_info(technologies):
         )
 
     console.print(table)
+def show_cve_results(cves):
+
+    from rich.table import Table
+
+    print()
+
+    if not cves:
+        console.print(
+            "[green]✓ No confirmed CVEs detected[/green]"
+        )
+        return
+
+    table = Table(
+        title="🔎 CONFIRMED CVE / NVD FINDINGS"
+    )
+
+    table.add_column("CVE")
+    table.add_column("Severity")
+    table.add_column("CVSS")
+    table.add_column("Software")
+    table.add_column("Version")
+    table.add_column("Status")
+
+    for cve in cves:
+
+        table.add_row(
+            str(cve.get("id", "Unknown")),
+            str(cve.get("severity", "UNKNOWN")),
+            str(cve.get("cvss_score", "N/A")),
+            str(cve.get("product", "Unknown")),
+            str(cve.get("version", "Unknown")),
+            str(cve.get("status", "UNKNOWN"))
+        )
+
+    console.print(table)
+
+    console.print(
+        f"\n[bold]{len(cves)} confirmed CVE(s) detected[/bold]"
+    )
+
+    console.print(
+        "[dim]Source: NVD / CPE validation[/dim]"
+    )
 def show_port_scan(ports):
 
     table = Table(
@@ -529,3 +556,210 @@ def show_port_scan(ports):
             border_style="bright_blue"
         )
     )
+def show_final_summary(summary):
+
+    from rich.table import Table
+    from rich.panel import Panel
+
+    score = summary.get(
+        "score",
+        0
+    )
+
+    rating = summary.get(
+        "rating",
+        "UNKNOWN"
+    )
+
+    findings = summary.get(
+        "findings",
+        []
+    )
+
+    recommendations = summary.get(
+        "recommendations",
+        []
+    )
+
+    # -----------------------------------------
+    # SECURITY SCORE
+    # -----------------------------------------
+
+    if score >= 80:
+        score_style = "green"
+    elif score >= 60:
+        score_style = "yellow"
+    else:
+        score_style = "red"
+
+    if rating == "LOW":
+        risk_style = "green"
+    elif rating == "MEDIUM":
+        risk_style = "yellow"
+    else:
+        risk_style = "red"
+
+    # -----------------------------------------
+    # FINAL SECURITY SUMMARY
+    # -----------------------------------------
+
+    summary_table = Table(
+        title="🛡 FINAL SECURITY SUMMARY",
+        border_style="bright_blue"
+    )
+
+    summary_table.add_column(
+        "Property",
+        style="cyan"
+    )
+
+    summary_table.add_column(
+        "Value"
+    )
+
+    summary_table.add_row(
+        "Security Score",
+        f"[{score_style}]{score}/100[/{score_style}]"
+    )
+
+    summary_table.add_row(
+        "Risk Level",
+        f"[{risk_style}]{rating}[/{risk_style}]"
+    )
+
+    summary_table.add_row(
+        "Findings",
+        str(len(findings))
+    )
+
+    # Open ports are calculated from results
+    from modules.reporting.results import get_results
+
+    results = get_results()
+
+    ports = results.get(
+        "ports",
+        []
+    )
+
+    open_ports = [
+        port
+        for port in ports
+        if port.get("status") == "OPEN"
+    ]
+
+    summary_table.add_row(
+        "Open Ports",
+        str(len(open_ports))
+    )
+
+    console.print(
+        Panel(
+            summary_table,
+            title="WebShield 2.0",
+            border_style="bright_blue"
+        )
+    )
+
+    # -----------------------------------------
+    # KEY FINDINGS
+    # -----------------------------------------
+
+    findings_table = Table(
+        title="🔎 KEY FINDINGS",
+        border_style="bright_blue",
+        show_lines=True
+    )
+
+    findings_table.add_column(
+        "Finding",
+        style="cyan"
+    )
+
+    findings_table.add_column(
+        "Severity"
+    )
+
+    findings_table.add_column(
+        "Category"
+    )
+
+    for finding in findings:
+
+        name = finding.get(
+            "name",
+            "Unknown"
+        )
+
+        risk = finding.get(
+            "risk",
+            "UNKNOWN"
+        )
+
+        category = finding.get(
+            "category",
+            "Security"
+        )
+
+        if risk == "HIGH":
+            risk_display = "[red]HIGH[/red]"
+        elif risk == "MEDIUM":
+            risk_display = "[yellow]MEDIUM[/yellow]"
+        elif risk == "LOW":
+            risk_display = "[green]LOW[/green]"
+        else:
+            risk_display = risk
+
+        findings_table.add_row(
+            name,
+            risk_display,
+            category
+        )
+
+    if findings:
+
+        console.print(
+            findings_table
+        )
+
+    else:
+
+        console.print(
+            "[green]✓ No security findings detected[/green]"
+        )
+
+    # -----------------------------------------
+    # RECOMMENDATIONS
+    # -----------------------------------------
+
+    if recommendations:
+
+        recommendation_table = Table(
+            title="💡 RECOMMENDATIONS",
+            border_style="bright_blue",
+            show_lines=True
+        )
+
+        recommendation_table.add_column(
+            "#",
+            style="cyan",
+            width=3
+        )
+
+        recommendation_table.add_column(
+            "Recommendation"
+        )
+
+        for index, recommendation in enumerate(
+            recommendations,
+            start=1
+        ):
+
+            recommendation_table.add_row(
+                str(index),
+                recommendation
+            )
+
+        console.print(
+            recommendation_table
+        )

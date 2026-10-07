@@ -28,23 +28,16 @@ SECURITY_HEADERS = {
         "risk": "LOW",
         "info": "Controls referrer information leakage",
     },
-
 }
-
 
 
 def check_headers(response):
 
     findings = {}
 
-    score = 100
-
-
     for header, info in SECURITY_HEADERS.items():
 
-
         present = header in response.headers
-
 
         status = (
             "PRESENT"
@@ -52,7 +45,6 @@ def check_headers(response):
             else
             "MISSING"
         )
-
 
         findings[header] = {
 
@@ -64,48 +56,13 @@ def check_headers(response):
 
         }
 
-
-
-        if not present:
-
-
-            if info["risk"] == "HIGH":
-
-                score -= 25
-
-
-            elif info["risk"] == "MEDIUM":
-
-                score -= 15
-
-
-            else:
-
-                score -= 5
-
-
-
-    score = max(score,0)
-
-
-
     set_result(
         "headers",
         findings
     )
 
-
-    set_result(
-        "score",
-        score
-    )
-
-
-    # Terminal display
     show_security_headers(
-        findings,
-        score
+        findings
     )
-
 
     return findings
